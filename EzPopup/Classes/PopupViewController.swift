@@ -73,6 +73,7 @@ public class PopupViewController: UIViewController {
     /// Shadow enabled, default is true
     public var shadowEnabled = true
     
+    public var setMaskedCorners = false
     /// The pop up view controller. It's not mandatory.
     private(set) public var contentController: UIViewController?
     
@@ -156,7 +157,8 @@ public class PopupViewController: UIViewController {
         view.backgroundColor = backgroundColor.withAlphaComponent(backgroundAlpha)
         
         if cornerRadius > 0 {
-            if #available(iOS 11.0, *) {
+            if setMaskedCorners{
+                if #available(iOS 11.0, *) {
                 contentView?.layer.cornerRadius = cornerRadius
                 contentView?.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
                 contentView?.layer.masksToBounds = true
@@ -165,7 +167,11 @@ public class PopupViewController: UIViewController {
                     let shapeLayerObj = CAShapeLayer()
                     shapeLayerObj.path = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
                     contentView.layer.mask = shapeLayerObj
+                    }
                 }
+            }else{
+                contentView?.layer.cornerRadius = cornerRadius
+                contentView?.layer.masksToBounds = true
             }
         }
         
