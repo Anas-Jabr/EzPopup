@@ -156,8 +156,17 @@ public class PopupViewController: UIViewController {
         view.backgroundColor = backgroundColor.withAlphaComponent(backgroundAlpha)
         
         if cornerRadius > 0 {
-            contentView?.layer.cornerRadius = cornerRadius
-            contentView?.layer.masksToBounds = true
+            if #available(iOS 11.0, *) {
+                contentView?.layer.cornerRadius = cornerRadius
+                contentView?.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+                contentView?.layer.masksToBounds = true
+            } else {
+                if let contentView = contentView{
+                    let shapeLayerObj = CAShapeLayer()
+                    shapeLayerObj.path = UIBezierPath(roundedRect: contentView.bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
+                    contentView.layer.mask = shapeLayerObj
+                }
+            }
         }
         
         if shadowEnabled {
